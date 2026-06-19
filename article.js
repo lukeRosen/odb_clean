@@ -195,7 +195,8 @@ function populateSection(containerId, bodyId, html) {
   const container = document.getElementById(containerId);
   const body = document.getElementById(bodyId);
   if (html) {
-    body.innerHTML = html;
+    const bodyContent = sanitizeHtml(html);
+    body.appendChild(bodyContent);
     container.style.display = 'block';
   } else {
     body.innerHTML = '';
@@ -222,7 +223,8 @@ function renderArticle(content, { year, month, day }) {
   const bibleVerseEl = document.getElementById('bibleVerse');
   if (content.bibleVerseText) {
     if (content.bibleVerseUrl) {
-      bibleVerseEl.innerHTML = `<a href="${content.bibleVerseUrl}" target="_blank" rel="noopener noreferrer">${content.bibleVerseText}</a>`;
+      const bibleVerseContent = sanitizeHtml(`<a href="${content.bibleVerseUrl}" target="_blank" rel="noopener noreferrer">${content.bibleVerseText}</a>`);
+      bibleVerseEl.appendChild(bibleVerseContent);
     } else {
       bibleVerseEl.textContent = content.bibleVerseText;
     }
@@ -238,6 +240,81 @@ function renderArticle(content, { year, month, day }) {
   populateSection('insightsContainer', 'insightsBody', content.insightsBody);
 
   showArticle();
+}
+
+/**
+ * Safely parses and sanitizes an HTML string using DOMParser.
+ * Only allows safe text formatting, structural lists, headings, and dividers.
+ * 
+ * @param {string} untrustedHtml - The raw, untrusted HTML input string.
+ * @returns {DocumentFragment} A safe DOM fragment ready to be appended to the page.
+ */
+function sanitizeHtml(untrustedHtml) {
+  const parser = new DOMParser();
+  // Parse inside an isolated, dead document context to prevent execution
+  const virtualDoc = parser.parseFromString(untrustedHtml, 'text/html');
+
+  // Explicitly allowed elements (No tables, forms, scripts, objects, or styles)
+  const allowedTags = [
+    'BR', 'P', 'STRONG', 'A', 'EM', 'CODE', 'PRE', 'SUB', 'SUP',
+    'UL', 'OL', 'LI', 'SPAN', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'BLOCKQUOTE'
+  ];
+
+  // Explicitly allowed attributes per element (Avoid 'style' attributes entirely)
+  const allowedAttributes = {
+    'A': ['href', 'target', 'title', 'rel'],
+    'SPAN': ['class'],
+    'P': ['class'],
+    'LI': ['class'],
+    'UL': ['class'],
+    'OL': ['class', 'type']
+  };
+
+  // Create a safe, blank container to hold the clean nodes
+  const cleanFragment = document.createDocumentFragment();
+
+  // Recursive function to process and filter elements
+  function cleanNode(sourceNode, targetParent) {
+    let currentNode = sourceNode.firstChild;
+
+    while (currentNode) {
+      if (currentNode.nodeType === Node.TEXT_NODE) {
+        // Text nodes are inherently safe; clone them directly
+        targetParent.appendChild(currentNode.cloneNode(true));
+      }
+      else if (currentNode.nodeType === Node.ELEMENT_NODE && allowedTags.includes(currentNode.tagName)) {
+        // Create a brand new clean element in the active window context
+        const newElement = document.createElement(currentNode.tagName.toLowerCase());
+
+        // Inspect and copy only whitelisted attributes
+        const validAttrs = allowedAttributes[currentNode.tagName] || [];
+        for (const attr of currentNode.attributes) {
+          const attrName = attr.name.toLowerCase();
+
+          if (validAttrs.includes(attrName)) {
+            // Crucial Security Check: Block XSS via javascript: or data: URL links
+            if (attrName === 'href') {
+              const normalizedValue = attr.value.trim().toLowerCase();
+              if (normalizedValue.startsWith('javascript:') || normalizedValue.startsWith('data:')) {
+                continue; // Discard malicious link payload
+              }
+            }
+            newElement.setAttribute(attr.name, attr.value);
+          }
+        }
+
+        // Recurse down into the children of this node
+        cleanNode(currentNode, newElement);
+        targetParent.appendChild(newElement);
+      }
+      // Move to the next sibling element in the virtual tree
+      currentNode = currentNode.nextSibling;
+    }
+  }
+
+  // Run the sanitizer over the body of the virtual document
+  cleanNode(virtualDoc.body, cleanFragment);
+  return cleanFragment;
 }
 
 // ---------------------------------------------------------------------------
