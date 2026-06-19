@@ -26,15 +26,16 @@ body {
   min-height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start; /* Removed vertical centering */
   color: var(--text-primary);
   overflow: hidden;
 }
 
 .container {
-  width: 100%;
-  max-width: 440px;
+  width: 70vw; /* Stretched container to 70% of screen width */
+  max-width: 700px;
   padding: 1.5rem;
+  margin-top: 12vh; /* Offset from top */
 }
 
 .glass-card {
@@ -43,29 +44,30 @@ body {
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--glass-border);
   border-radius: 28px;
-  padding: 3rem 2rem;
+  padding: 3.5rem 2.5rem;
   box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.1);
   text-align: center;
 }
 
 h1 {
-  font-size: 1.85rem;
+  font-size: 2.3rem; /* Increased heading font size */
   font-weight: 700;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
   letter-spacing: -0.025em;
   color: var(--text-primary);
 }
 
 .subtitle {
   color: var(--text-secondary);
-  font-size: 0.95rem;
-  margin-bottom: 2.5rem;
+  font-size: 1.9rem; /* Increased to be almost the same as title */
+  font-weight: 400;
+  margin-bottom: 3rem;
 }
 
 #dateEntryForm {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.75rem;
 }
 
 /* Date Picker Wrapper */
@@ -96,23 +98,29 @@ h1 {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 0.5rem;
-  padding: 1.25rem;
-  font-size: 1.2rem;
+  gap: 1.75rem; /* Increased spacing between each pair */
+  padding: 1.5rem;
+  font-size: 1.4rem; /* Increased relative size to balance the card */
   font-weight: 500;
   pointer-events: none; /* Let clicks pass through to the input */
   user-select: none;
 }
 
+.date-pair {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem; /* Reduced spacing within each pair */
+}
+
 .custom-display span {
   font-family: 'Inter', sans-serif;
-  font-size: 1.35rem;
+  font-size: 1.65rem; /* Increased numbers font size */
   font-weight: 600;
   color: var(--text-primary);
   background: rgba(15, 23, 42, 0.05);
-  padding: 0.25rem 0.75rem;
-  border-radius: 8px;
-  min-width: 3.5rem;
+  padding: 0.35rem 1rem;
+  border-radius: 10px;
+  min-width: 4.5rem; /* Stretched chips slightly */
   text-align: center;
   display: inline-block;
 }
@@ -143,6 +151,11 @@ h1 {
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+  
+  /* Retain original size properties and center inside the form */
+  width: 100%;
+  max-width: 376px;
+  align-self: center;
 }
 
 .submit-btn:hover {

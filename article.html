@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>靈修文章</title>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="靈修">
+    
+    <meta name="theme-color" content="#1e1b4b">
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Specific styles for article layout -->
+    <link rel="stylesheet" href="article.css">
+  </head>
+  <body class="article-page">
+
+    <main class="article-container">
+      
+      <div class="top-bar">
+        <a href="index.html" class="back-btn">
+          <span>&larr;</span> 返回
+        </a>
+        <button id="shareBtn" class="share-btn" style="display: none;">
+          分享至 Line
+        </button>
+      </div>
+      
+      <div class="article-card">
+        
+        <div id="loadingState">
+          <p>正在載入靈修文章...</p>
+        </div>
+        
+        <div id="errorState">
+          <p id="errorText">無法載入文章，請稍後再試。</p>
+        </div>
+        
+        <div id="articleBody">
+          <h1 id="articleTitle"></h1>
+          <div id="articleDate"></div>
+          
+          <div id="audioWrapper" class="audio-container" style="display: none;">
+            <audio id="articleAudio" controls preload="metadata"></audio>
+          </div>
+          
+          <div class="article-content" id="devotionBody"></div>
+          
+          <div id="reflectContainer" style="display: none;">
+            <div class="section-heading">反思與討論</div>
+            <div class="article-content" id="reflectBody"></div>
+          </div>
+          
+          <div id="prayerContainer" style="display: none;">
+            <div class="section-heading">禱告</div>
+            <div class="article-content" id="prayerBody"></div>
+          </div>
+          
+          <div id="insightsContainer" style="display: none;">
+            <div class="section-heading">靈糧透視</div>
+            <div class="article-content" id="insightsBody"></div>
+          </div>
+          
+        </div>
+      </div>
+    </main>
+
+    <script src="article.js"></script>
+  </body>
+</html>
