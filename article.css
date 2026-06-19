@@ -89,6 +89,16 @@ body.article-page {
   font-weight: 500;
 }
 
+#bibleVerse a {
+  color: var(--primary-color);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+#bibleVerse a:hover {
+  text-decoration: underline;
+}
+
 .audio-container {
   margin-bottom: 2.5rem;
   width: 100%;

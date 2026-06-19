@@ -5,8 +5,11 @@
  *   1. Fetches the devotional listing from the ODB search API to get the article path.
  *   2. Fetches the full article HTML page and parses window._model out of the
  *      first <script> tag using DOMParser to extract:
- *        - devotionBody   : the devotional text (HTML string)
- *        - mandarinMp3Url : the 華語 podcast MP3 URL
+ *        - title           : the article title (pageModel.pageTitle)
+ *        - bibleVerseText  : the scripture reference (pageModel.bibleVerseText)
+ *        - bibleVerseUrl   : link to the passage (pageModel.bibleVerseLink.href)
+ *        - devotionBody    : the devotional text (HTML string)
+ *        - mandarinMp3Url  : the 華語 podcast MP3 URL
  */
 
 // ---------------------------------------------------------------------------
@@ -89,7 +92,7 @@ function buildProxyUrl(targetUrl, { reqHeaders = {}, resHeaders = {} } = {}) {
 }
 
 // ---------------------------------------------------------------------------
-// Fetch the article page HTML and extract devotionBody + Mandarin MP3
+// Fetch the article page HTML and extract title, devotionBody, and Mandarin MP3
 // ---------------------------------------------------------------------------
 async function fetchDevotionalContent(articleUrl) {
   const targetUrl = buildProxyUrl(articleUrl, {
@@ -137,15 +140,104 @@ async function fetchDevotionalContent(articleUrl) {
 
   const pageModel = model.pageModel || {};
 
-  // Extract devotional body text (HTML string)
-  const devotionBody = pageModel.devotionBody || '';
+  const title = pageModel.pageTitle || model.name || '';
+
+  const bibleVerseText = pageModel.bibleVerseText || '';
+  const bibleVerseUrl = pageModel.bibleVerseLink?.href || null;
 
   // Find the Mandarin (華語) podcast entry
   const audios = pageModel.podcastPlayerAudios || [];
   const mandarinEntry = audios.find(a => a.podcastLanguage === '華語');
   const mandarinMp3Url = mandarinEntry ? mandarinEntry.podcastUrl.trim() : null;
 
-  return { devotionBody, mandarinMp3Url };
+  // Extract devotional body text (HTML string)
+  const devotionBody = pageModel.devotionBody || '';
+
+  // Extract reflect body text (HTML string)
+  const reflectBody = pageModel.reflectBody || '';
+
+  // Extract prayer body text (HTML string)
+  const prayerBody = pageModel.prayerBody || '';
+
+  // Extract insights body text (HTML string)
+  const insightsBody = pageModel.insightsBody || '';
+
+  return { title, bibleVerseText, bibleVerseUrl, mandarinMp3Url, devotionBody, reflectBody, prayerBody, insightsBody };
+}
+
+// ---------------------------------------------------------------------------
+// UI state helpers
+// ---------------------------------------------------------------------------
+function showLoading() {
+  document.getElementById('loadingState').style.display = 'block';
+  document.getElementById('errorState').style.display = 'none';
+  document.getElementById('articleBody').style.display = 'none';
+}
+
+function showError(message) {
+  document.getElementById('loadingState').style.display = 'none';
+  document.getElementById('errorState').style.display = 'block';
+  document.getElementById('errorText').textContent = message;
+  document.getElementById('articleBody').style.display = 'none';
+}
+
+function showArticle() {
+  document.getElementById('loadingState').style.display = 'none';
+  document.getElementById('errorState').style.display = 'none';
+  document.getElementById('articleBody').style.display = 'block';
+}
+
+function formatArticleDate(year, month, day) {
+  return `${year}年${month}月${day}日`;
+}
+
+function populateSection(containerId, bodyId, html) {
+  const container = document.getElementById(containerId);
+  const body = document.getElementById(bodyId);
+  if (html) {
+    body.innerHTML = html;
+    container.style.display = 'block';
+  } else {
+    body.innerHTML = '';
+    container.style.display = 'none';
+  }
+}
+
+function renderArticle(content, { year, month, day }) {
+  document.getElementById('articleTitle').textContent = content.title;
+  document.getElementById('articleDate').textContent = formatArticleDate(year, month, day);
+  document.title = content.title || '靈修文章';
+
+  const audioWrapper = document.getElementById('audioWrapper');
+  const audioEl = document.getElementById('articleAudio');
+  if (content.mandarinMp3Url) {
+    audioEl.src = content.mandarinMp3Url;
+    audioWrapper.style.display = 'block';
+  } else {
+    audioEl.removeAttribute('src');
+    audioWrapper.style.display = 'none';
+  }
+
+  const bibleVerseContainer = document.getElementById('bibleVerseContainer');
+  const bibleVerseEl = document.getElementById('bibleVerse');
+  if (content.bibleVerseText) {
+    if (content.bibleVerseUrl) {
+      bibleVerseEl.innerHTML = `<a href="${content.bibleVerseUrl}" target="_blank" rel="noopener noreferrer">${content.bibleVerseText}</a>`;
+    } else {
+      bibleVerseEl.textContent = content.bibleVerseText;
+    }
+    bibleVerseContainer.style.display = 'block';
+  } else {
+    bibleVerseEl.innerHTML = '';
+    bibleVerseContainer.style.display = 'none';
+  }
+
+  populateSection('devotionBodyContainer', 'devotionBody', content.devotionBody);
+  populateSection('reflectContainer', 'reflectBody', content.reflectBody);
+  populateSection('prayerContainer', 'prayerBody', content.prayerBody);
+  populateSection('insightsContainer', 'insightsBody', content.insightsBody);
+
+  showArticle();
 }
 
 // ---------------------------------------------------------------------------
@@ -154,33 +246,27 @@ async function fetchDevotionalContent(articleUrl) {
 document.addEventListener('DOMContentLoaded', async () => {
   const { year, month, day } = getQueryParams();
 
+  showLoading();
+
   if (!year || !month || !day) {
-    console.error('[article.js] Missing date query parameters. Expected ?month=X&day=Y&year=Z');
+    showError('缺少日期參數，請從首頁選擇日期後再試。');
     return;
   }
-
-  console.log(`[article.js] Fetching devotional for ${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`);
 
   try {
     const data = await fetchDevotionalUrl({ year, month, day });
 
-    // Log the full response as a JS object
-    console.log('[article.js] API response:', data);
-
-    // Log the full URL of the first item (prepend the ODB host)
-    if (data.items && data.items.length > 0) {
-      const ODB_HOST = 'https://www.odbm.org';
-      const articlePath = data.items[0].url;
-      const articleUrl = `${ODB_HOST}${articlePath}`;
-      console.log('[article.js] First item URL:', articleUrl);
-
-      // Step 2: fetch the article page and parse its content
-      const content = await fetchDevotionalContent(articleUrl);
-      console.log('[article.js] Devotional content:', content);
-    } else {
-      console.warn('[article.js] No items found in the response.');
+    if (!data.items || data.items.length === 0) {
+      showError('找不到該日期的靈修文章，請選擇其他日期。');
+      return;
     }
+
+    const ODB_HOST = 'https://www.odbm.org';
+    const articleUrl = `${ODB_HOST}${data.items[0].url}`;
+    const content = await fetchDevotionalContent(articleUrl);
+    renderArticle(content, { year, month, day });
   } catch (err) {
     console.error('[article.js] Error fetching devotional:', err);
+    showError('無法載入文章，請稍後再試。');
   }
 });
