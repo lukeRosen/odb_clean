@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>靈修文章 - 選擇日期</title>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="靈修">
+    
+    <meta name="theme-color" content="#1e1b4b">
+    <link rel="manifest" href="manifest.json">
+
+    <!-- CSS is now active -->
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+
+    <main class="container">
+      <div class="glass-card">
+        <h1>閱讀靈修文章</h1>
+        <p class="subtitle">請選擇您想閱讀的日期</p>
+        
+        <form id="dateEntryForm">
+          <div class="date-picker-wrapper">
+            <!-- Custom visual display of the date -->
+            <div id="customDateDisplay" class="custom-display" aria-hidden="true">
+              <span id="displayYear">2026</span> 年
+              <span id="displayMonth">06</span> 月
+              <span id="displayDay">18</span> 日
+            </div>
+
+            <!-- Invisible native date input on top -->
+            <input 
+              type="date" 
+              id="nativeDateInput" 
+              class="invisible-native-picker" 
+              required
+            >
+          </div>
+          
+          <button type="submit" class="submit-btn">下一頁</button>
+        </form>
+      </div>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
