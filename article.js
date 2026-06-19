@@ -42,7 +42,7 @@ function toDateString(date) {
 async function fetchDevotionalUrl({ year, month, day }) {
   // Build start and end date strings required by the API
   const startDate = new Date(year, month - 1, day);       // selected date
-  const endDate = new Date(year, month - 1, day + 1);   // day after
+  const endDate = startDate; // range is inclusive, use the same as start date
 
   const sd = toDateString(startDate);
   const ed = toDateString(endDate);
@@ -162,7 +162,7 @@ async function fetchDevotionalContent(articleUrl) {
   // Extract insights body text (HTML string)
   const insightsBody = pageModel.insightsBody || '';
 
-  return { title, bibleVerseText, bibleVerseUrl, mandarinMp3Url, devotionBody, reflectBody, prayerBody, insightsBody };
+  return { articleUrl, title, bibleVerseText, bibleVerseUrl, mandarinMp3Url, devotionBody, reflectBody, prayerBody, insightsBody };
 }
 
 // ---------------------------------------------------------------------------
@@ -205,6 +205,16 @@ function populateSection(containerId, bodyId, html) {
 }
 
 function renderArticle(content, { year, month, day }) {
+  const shareBtn = document.getElementById('shareBtn');
+  if (content.articleUrl) {
+    const shareText = `${month} - ${day} - ${year}\n${content.articleUrl}`;
+    const shareUrl = `https://line.me/R/share?text=${encodeURIComponent(shareText)}`;
+    shareBtn.href = shareUrl;
+    shareBtn.style.display = 'inline-flex';
+  } else {
+    shareBtn.style.display = 'none';
+  }
+
   document.getElementById('articleTitle').textContent = content.title;
   document.getElementById('articleDate').textContent = formatArticleDate(year, month, day);
   document.title = content.title || '靈修文章';

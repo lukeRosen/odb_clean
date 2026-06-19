@@ -1,81 +1,88 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>靈修文章</title>
-    
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="靈修">
-    
-    <meta name="theme-color" content="#1e1b4b">
-    <link rel="manifest" href="manifest.json">
-    <link rel="stylesheet" href="styles.css">
-    
-    <!-- Specific styles for article layout -->
-    <link rel="stylesheet" href="article.css">
-  </head>
-  <body class="article-page">
 
-    <main class="article-container">
-      
-      <div class="top-bar">
-        <a href="index.html" class="back-btn">
-          <span>&larr;</span> 返回
-        </a>
-        <button id="shareBtn" class="share-btn" style="display: none;">
-          分享至 Line
-        </button>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>靈命日糧 - 閱讀文章</title>
+
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="靈命日糧">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+
+  <meta name="theme-color" content="#1e1b4b">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Specific styles for article layout -->
+  <link rel="stylesheet" href="article.css">
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=ios_share" />
+</head>
+
+<body class="article-page">
+
+  <main class="article-container">
+
+    <div class="top-bar">
+      <a href="index.html" class="back-btn">
+        <span>&larr;</span> 返回
+      </a>
+      <a id="shareBtn" class="share-btn" style="display: none;">
+        <span class="material-symbols-outlined">ios_share</span>
+        <span>分享至 Line</span>
+      </a>
+    </div>
+
+    <div class="article-card">
+
+      <div id="loadingState">
+        <p>正在載入靈修文章...</p>
       </div>
-      
-      <div class="article-card">
-        
-        <div id="loadingState">
-          <p>正在載入靈修文章...</p>
-        </div>
-        
-        <div id="errorState">
-          <p id="errorText">無法載入文章，請稍後再試。</p>
-        </div>
-        
-        <div id="articleBody">
-          <h1 id="articleTitle"></h1>
-          <div id="articleDate"></div>
-          
-          <div id="bibleVerseContainer" style="display: none;">
-            <div class="section-heading">聖經經文</div>
-            <div class="article-content" id="bibleVerse"></div>
-          </div>
 
-          <div id="audioWrapper" class="audio-container" style="display: none;">
-            <audio id="articleAudio" controls preload="metadata"></audio>
-          </div>
-          
-          <div id="devotionBodyContainer" style="display: none;">
-            <div class="section-heading">今日靈修</div>
-            <div class="article-content" id="devotionBody"></div>
-          </div>
-          
-          <div id="reflectContainer" style="display: none;">
-            <div class="section-heading">反思與討論</div>
-            <div class="article-content" id="reflectBody"></div>
-          </div>
-          
-          <div id="prayerContainer" style="display: none;">
-            <div class="section-heading">禱告</div>
-            <div class="article-content" id="prayerBody"></div>
-          </div>
-          
-          <div id="insightsContainer" style="display: none;">
-            <div class="section-heading">靈糧透視</div>
-            <div class="article-content" id="insightsBody"></div>
-          </div>
-          
-        </div>
+      <div id="errorState">
+        <p id="errorText">無法載入文章，請稍後再試。</p>
       </div>
-    </main>
 
-    <script src="article.js"></script>
-  </body>
+      <div id="articleBody">
+        <h1 id="articleTitle"></h1>
+        <div id="articleDate"></div>
+
+        <div id="bibleVerseContainer" style="display: none;">
+          <div class="section-heading">聖經經文</div>
+          <div class="article-content" id="bibleVerse"></div>
+        </div>
+
+        <div id="audioWrapper" class="audio-container" style="display: none;">
+          <audio id="articleAudio" controls preload="metadata"></audio>
+        </div>
+
+        <div id="devotionBodyContainer" style="display: none;">
+          <div class="section-heading">今日靈修</div>
+          <div class="article-content" id="devotionBody"></div>
+        </div>
+
+        <div id="reflectContainer" style="display: none;">
+          <div class="section-heading">反思與討論</div>
+          <div class="article-content" id="reflectBody"></div>
+        </div>
+
+        <div id="prayerContainer" style="display: none;">
+          <div class="section-heading">禱告</div>
+          <div class="article-content" id="prayerBody"></div>
+        </div>
+
+        <div id="insightsContainer" style="display: none;">
+          <div class="section-heading">靈糧透視</div>
+          <div class="article-content" id="insightsBody"></div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <script src="article.js"></script>
+</body>
+
 </html>

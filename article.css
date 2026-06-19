@@ -4,14 +4,14 @@
   padding: 1.5rem;
   margin: 0 auto;
   /* Allow natural scrolling instead of full screen centering */
-  margin-top: 4vh; 
+  margin-top: 4vh;
   margin-bottom: 8vh;
 }
 
 /* Override body for article page to allow scrolling */
 body.article-page {
   align-items: flex-start;
-  overflow: auto; 
+  overflow: auto;
   min-height: 100vh;
 }
 
@@ -43,19 +43,31 @@ body.article-page {
 }
 
 .share-btn {
-  background: #00B900; /* Line Green */
+  /* Line Green */
+  background: #00B900;
   color: white;
-  border: none;
+  text-decoration: none;
   padding: 0.75rem 1.25rem;
   border-radius: 12px;
   font-weight: 600;
   font-size: 1.1rem;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
+  border: none;
   transition: all 0.2s;
+  /* Vertical layout */
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
   box-shadow: 0 4px 12px rgba(0, 185, 0, 0.3);
+}
+
+.share-btn span {
+  font-size: 0.8rem;
+}
+
+.share-btn .material-symbols-outlined {
+  font-size: 2rem;
 }
 
 .share-btn:hover {
@@ -117,7 +129,8 @@ audio {
 .article-content {
   font-size: 1.25rem;
   line-height: 1.8;
-  color: #1e293b; /* Darker slate for reading legibility */
+  color: #1e293b;
+  /* Darker slate for reading legibility */
 }
 
 .article-content p {
@@ -134,7 +147,8 @@ audio {
   padding-bottom: 0.5rem;
 }
 
-#loadingState, #errorState {
+#loadingState,
+#errorState {
   text-align: center;
   padding: 4rem 2rem;
   font-size: 1.25rem;
@@ -142,7 +156,8 @@ audio {
 }
 
 #errorState {
-  color: #ef4444; /* Red 500 */
+  color: #ef4444;
+  /* Red 500 */
   display: none;
 }
 
